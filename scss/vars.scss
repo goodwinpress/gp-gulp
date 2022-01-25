@@ -1,0 +1,43 @@
+:root {
+  --dark-col: #2e363e;
+  --light-col: #fff;
+  --site-bg: #fff;
+  --accent-bg: #596ee4;
+  --prime-font: "Commissioner", sans-serif;
+
+}
+
+@mixin flex-rwsb {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+@mixin flex-rnwsb {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+}
+
+@mixin flex-rnwfs {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+}
+
+@mixin flex-cnsb {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-between;
+}
+
+@mixin flex-cn {
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+@mixin flex-cc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
