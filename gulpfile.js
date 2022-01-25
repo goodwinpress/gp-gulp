@@ -16,6 +16,7 @@ const svgSprite = require('gulp-svg-sprite');
 const del = require('del');
 const htmlmin = require('gulp-htmlmin');
 const webp = require('gulp-webp');
+const pug = require('gulp-pug');
 
 // создаем стили
 const styles = () => {
@@ -45,6 +46,14 @@ const webpImages = () => {
     .pipe(webp())
     .pipe(dest('./theme'))
 };
+
+
+const compile = () => {
+  return src('./src/**/*.pug')
+    .pipe(pug())
+    .pipe(dest('./theme'));
+};
+
 
 // добавляем шаблоны файлов
 const htmlInclude = () => {
@@ -117,6 +126,7 @@ const watchFiles = () => {
 	watch('./src/js/**/*.js', js);
 	watch('./src/template-parts/*.html', htmlInclude);
 	watch('./src/*.html', htmlInclude);
+	watch('./src/*.pug', compile);
 	watch('./src/img/**.jpg', imgToTheme);
 	watch('./src/img/**.png', imgToTheme);
 	watch('./src/img/**.jpeg', imgToTheme);
@@ -129,10 +139,11 @@ const watchFiles = () => {
 	watch('./src/fonts/**.woff2', fonts);
 }
 exports.styles = styles;
-exports.js = js;
+exports.compile = compile;
+exports.styles = styles;
 exports.watchFiles = watchFiles;
 
-exports.default = series(clean, parallel(htmlInclude, fonts, imgToTheme, webpImages, source, folders, svgSprites), js, styles, watchFiles);
+exports.default = series(clean, parallel(htmlInclude, compile, fonts, imgToTheme, webpImages, source, folders, svgSprites), js, styles, watchFiles);
 
 const stylesBuild = () => {
 	return src('./src/scss/**/*.scss')
@@ -160,7 +171,7 @@ const htmlMinify = () => {
 		.pipe(dest('./theme'));
 	}
 
-exports.build = series(clean, parallel(htmlInclude, fonts, imgToTheme, webpImages, source, svgSprites), stylesBuild, htmlMinify, watchFiles);
+exports.build = series(clean, parallel(htmlInclude, compile, fonts, imgToTheme, webpImages, source, svgSprites), stylesBuild, htmlMinify, watchFiles);
 
 
 
