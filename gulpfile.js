@@ -127,6 +127,7 @@ const watchFiles = () => {
 	watch('./src/template-parts/*.html', htmlInclude);
 	watch('./src/*.html', htmlInclude);
 	watch('./src/*.pug', compile);
+	watch('./src/template-parts/*.pug', compile);
 	watch('./src/img/**.jpg', imgToTheme);
 	watch('./src/img/**.png', imgToTheme);
 	watch('./src/img/**.jpeg', imgToTheme);
