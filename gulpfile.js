@@ -16,7 +16,6 @@ const svgSprite = require('gulp-svg-sprite');
 const del = require('del');
 const htmlmin = require('gulp-htmlmin');
 const webp = require('gulp-webp');
-const pug = require('gulp-pug');
 
 // создаем стили
 const styles = () => {
@@ -29,14 +28,13 @@ const styles = () => {
 			suffix: '.min'
 		}))
 		.pipe(autoprefixer({
-			grid: true,
 			cascade: false,
 		}))
 		.pipe(cleanCSS({
 			level: 2
 		}))
 		.pipe(sourcemaps.write('.'))
-		.pipe(dest('./theme/css'))
+		.pipe(dest('./app/css'))
 		.pipe(browserSync.stream())
 }
 
@@ -44,14 +42,7 @@ const styles = () => {
 const webpImages = () => {
   return src(['./src/**/**.{jpg,jpeg,png}'])
     .pipe(webp())
-    .pipe(dest('./theme'))
-};
-
-
-const compile = () => {
-  return src('./src/**/*.pug')
-    .pipe(pug())
-    .pipe(dest('./theme'));
+    .pipe(dest('./app'))
 };
 
 
@@ -62,20 +53,20 @@ const htmlInclude = () => {
 		prefix: '@',
 		basepath: '@file'
 	}))
-	.pipe(dest('./theme'))
+	.pipe(dest('./app'))
 	.pipe(browserSync.stream())
 }
 
-// переносим картинки в themes
-const imgToTheme = () => {
+// переносим картинки в apps
+const imgToapp = () => {
 	return src(['./src/img/**.jpg', './src/img/**.png', './src/img/**.jpeg', './src/img/**.svg'])
-		.pipe(dest('./theme/img'))
+		.pipe(dest('./app/img'))
 }
 
 // переносим и папки если есть
 const folders = () => {
 	return src(['./src/img/**'])
-	.pipe(dest('./theme/img/'))
+	.pipe(dest('./app/img/'))
 }
 
 // создаем спрайты
@@ -88,37 +79,37 @@ const svgSprites = () => {
 				}
 			}
 		}))
-		.pipe(dest('./theme/img'))
+		.pipe(dest('./app/img'))
 }
 
-// передаем всякую фигню, например, видео, в themes
+// передаем всякую фигню, например, видео, в apps
 const source = () => {
 	return src('./src/source/**')
-		.pipe(dest('./theme'))
+		.pipe(dest('./app'))
 }
 
 // передаем шрифты
 const fonts = () => {
 	return src(['./src/fonts/**.woff', './src/fonts/**.woff2'])
-		.pipe(dest('./theme/fonts'))
+		.pipe(dest('./app/fonts'))
 }
 
 //передаем скрипты
 const js = () => {
 	return src('./src/js/**/*.js')
-		.pipe(dest('./theme/js/'))
+		.pipe(dest('./app/js/'))
 }
 
 // очищаем рабочую папку
 const clean = () => {
-	return del(['theme/*'])
+	return del(['app/*'])
 }
 
 const watchFiles = () => {
 	browserSync.init({
 		server: {
-			baseDir: "./theme",
-			index: "home.html"
+			baseDir: "./app",
+			index: "index.html"
 		}
 	});
 	
@@ -126,11 +117,9 @@ const watchFiles = () => {
 	watch('./src/js/**/*.js', js);
 	watch('./src/template-parts/*.html', htmlInclude);
 	watch('./src/*.html', htmlInclude);
-	watch('./src/*.pug', compile);
-	watch('./src/template-parts/*.pug', compile);
-	watch('./src/img/**.jpg', imgToTheme);
-	watch('./src/img/**.png', imgToTheme);
-	watch('./src/img/**.jpeg', imgToTheme);
+	watch('./src/img/**.jpg', imgToapp);
+	watch('./src/img/**.png', imgToapp);
+	watch('./src/img/**.jpeg', imgToapp);
 	watch('./src/img/**/**.jpg', webpImages);
 	watch('./src/img/**/**.png', webpImages);
 	watch('./src/img/**', folders);
@@ -140,11 +129,10 @@ const watchFiles = () => {
 	watch('./src/fonts/**.woff2', fonts);
 }
 exports.styles = styles;
-exports.compile = compile;
 exports.styles = styles;
 exports.watchFiles = watchFiles;
 
-exports.default = series(clean, parallel(htmlInclude, compile, fonts, imgToTheme, webpImages, source, folders, svgSprites), js, styles, watchFiles);
+exports.default = series(clean, parallel(htmlInclude,  fonts, imgToapp, webpImages, source, folders, svgSprites), js, styles, watchFiles);
 
 const stylesBuild = () => {
 	return src('./src/scss/**/*.scss')
@@ -161,18 +149,12 @@ const stylesBuild = () => {
 		.pipe(cleanCSS({
 			level: 2
 		}))
-		.pipe(dest('./theme/css/'))
+		.pipe(dest('./app/css/'))
 }
 
-const htmlMinify = () => {
-	  return src('./theme/**/*.html')
-		.pipe(htmlmin({
-		  collapseWhitespace: true
-		}))
-		.pipe(dest('./theme'));
-	}
 
-exports.build = series(clean, parallel(htmlInclude, compile, fonts, imgToTheme, webpImages, source, svgSprites), stylesBuild, htmlMinify, watchFiles);
+
+exports.build = series(clean, parallel(htmlInclude,  fonts, imgToapp, webpImages, source, svgSprites), stylesBuild,  watchFiles);
 
 
 
